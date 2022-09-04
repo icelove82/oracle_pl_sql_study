@@ -6,9 +6,11 @@ DECLARE
     c_name PEOPLE.NAME%type;
     c_age PEOPLE.AGE%type;
 BEGIN
-    SELECT ID, NAME, AGE INTO c_id, c_name, c_age FROM PEOPLE WHERE ID = 21;
+    SELECT ID, NAME, AGE INTO c_id, c_name, c_age FROM PEOPLE WHERE ID = 261;
 
     INSERT INTO PEOPLE (NAME, AGE) VALUES ('ygc', 68);
+
+    DBMS_OUTPUT.PUT_LINE('anonymous block run :' || c_id || c_name || c_age);
 
     COMMIT;
 END;
