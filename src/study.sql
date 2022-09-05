@@ -47,7 +47,8 @@ DECLARE
     counter INT := 1;
     val varchar2(512);
 BEGIN
-    FOR n IN c_people LOOP
+    FOR n IN c_people
+        LOOP
             people_list.extend;
             people_list(counter) := n;
 
