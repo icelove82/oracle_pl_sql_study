@@ -215,14 +215,13 @@ END;
 
 -- 11. exception, user define exception
 DECLARE
-    id int := 0;
+    id         int := 0;
     people_rec PEOPLE%rowtype;
     invalid_id EXCEPTION ;
-
 BEGIN
     IF id = 0 THEN
         RAISE invalid_id;
-    end if;
+    END IF;
 
     SELECT *
     INTO people_rec
@@ -242,13 +241,12 @@ EXCEPTION
     WHEN others THEN
         INSERT INTO RESULT (RESVAL) VALUES ('unknown error');
         COMMIT;
-
 END;
 /
 
 -- 12. create trigger
 CREATE OR REPLACE TRIGGER log_people_insert
-    AFTER INSERT
+    AFTER INSERT OR UPDATE OR DELETE
     ON PEOPLE
     FOR EACH ROW
     WHEN ( NEW.ID > 0 )
@@ -263,6 +261,7 @@ END;
 -- 13. package
 -- package head
 CREATE OR REPLACE PACKAGE pkg_main AS
+--     static value
     COUNT int := 0;
 
     PROCEDURE addPeople(name PEOPLE.NAME%type, age PEOPLE.AGE%type);
@@ -275,7 +274,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_main AS
     PROCEDURE addPeople(name PEOPLE.NAME%type, age PEOPLE.AGE%type)
         IS
     BEGIN
-        COUNT := COUNT + 1;
+        pkg_main.COUNT := pkg_main.COUNT + 1;
         INSERT INTO PEOPLE (NAME, AGE) VALUES (name, age);
 
         INSERT INTO RESULT (RESVAL) VALUES ('pkg count : ' || pkg_main.COUNT);
@@ -285,7 +284,7 @@ CREATE OR REPLACE PACKAGE BODY pkg_main AS
     PROCEDURE delPeople(delId PEOPLE.ID%type)
         IS
     BEGIN
-        COUNT := COUNT + 1;
+        pkg_main.COUNT := pkg_main.COUNT + 1;
         DELETE
         FROM PEOPLE
         WHERE ID = delId;
@@ -297,7 +296,7 @@ END pkg_main;
 
 -- use pkg
 DECLARE
-    delId int := 242;
+    delId int := 243;
 BEGIN
     pkg_main.addPeople('YunMyeonghun', 40);
     pkg_main.delPeople(delId);
